@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 # Replace with your actual PostgreSQL credentials and database name
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:YOUR_PASSWORD@localhost:5432/vidyasaarthi_db"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@localhost:5432/vidyasaarthi_db"
 
 # The engine manages the connection pool
 engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=False)

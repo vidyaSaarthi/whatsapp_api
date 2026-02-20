@@ -1,14 +1,14 @@
 import requests
 
 # temp_token = 'EAAS2xeH0744BQwmjodAC1RCmH78fYjvGhQk0DDmnqbOT0nbE0jWZB4spU2cPJbEq12R9VDIZCmsIlPZC64EjD3qJrXZBARzGNWfBv3GZBZACoMXi2irA8b7EmL373v7E9H4uKUFg8ZAefVaeghnNutnWnSdQTsuCYITkE8Gst6IVSwSEdj7v09nB63s5PNCsO7ZCfMRko1NvvSNEyjGbQge7ENpUkm5I7P4zvy7zlaRaYN0CawrZAPZAWNCKGzNGhV0TGTZC1ZBzF3eeZCR5OpdsymIKI6rkiWgLvYvC9VQZDZD'
-temp_token = "EAAS2xeH0744BQ8ewTOUZC47NZCFqngjAOE2ipwHxZAQsQQtaR5lu7I5a9gWQnZBxKoZClhKGXRke7CH8iRzX1DBD9kEvPOiV1rogHXf2jlYtc3SspRtrSZC31YIafbZCMnyeO6Xd4qVAU3OpB8u3ZAhquI5viOGuwjrVOvkQFAuJvK7fmX8ILAzMQGnbZAEjllZCZCPPLWFPvcZCTvssCVz0IPL8BYRnZAlshVQuCkHlLL57mkhgX65Rn34yLGTsQWZCsI42ZB4otCAxxOjAlXRE9YK9pxmtJZB6YkJVWKoVrrMZD"
+temp_token = "EAAS2xeH0744BQ2yLTnpFFZCVNSxnpbFXXZBZAV4ZAsBGPdZCoAtcHcof23KjpXZCSXh4EMxOfS4HuQyUnWdTq0XJxeZA5WnnvpaZCbtW3hutm4ZAgYmujvhmjSkagt6oBAraweYzEQuCgpEsGFhmZAqBKmMq0dAT8pUZC4n18nPiSrsj7qemKlQsbjqA3MyBOZBTCTDkfILIc1BAZARNtJrrA0zHC0GZAI1yh437GZB90mHudoWiHZCcifezJ3ZCvsU2fyx86Jg78yGO9UJuBJDjwMkJVYC5RqzYiOLtLOq67JSMZD"
 
 def send_hello_world():
     # 1. Configuration variables
     # Replace these with the exact values from your Meta Dashboard
     phone_number_id = "950042731533532"  # E.g., 9500...
     access_token = temp_token  # Starts with EAAS...
-    recipient_number = "919896490308"  # Your verified personal number
+    recipient_number = "918377837545"  # Your verified personal number
 
     # 2. Meta Graph API v22.0 Endpoint
     url = f"https://graph.facebook.com/v22.0/{phone_number_id}/messages"
