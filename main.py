@@ -75,11 +75,21 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 db.add(inbound_log)
                 db.commit()
 
-                # 3. Generate the reply
-                reply_message = ""
+                # 🆕 3. HANDLE OPT-OUT (STOP)
                 text_lower = text_body.lower()
-                if "cutoff" in text_lower or "mcc" in text_lower:
-                    reply_message = "Hi! We are fetching the detailed cutoffs of MCC 3rd round for NEET PG Counselling. A counselor will connect shortly."
+                if text_lower == "stop":
+                    if student:
+                        student.opt_in_status = False
+                        db.commit()
+
+                        # Send a confirmation of the opt-out
+                        reply_message = "You have been unsubscribed from VidyaSaarthi alerts. To re-subscribe, reply START."
+                        # send_whatsapp_message(student_phone, reply)
+                        # return {"status": "unsubscribed"}
+
+                # 3. Generate the reply
+                elif text_lower == "yes":
+                    reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
                 else:
                     reply_message = "Welcome! How can we help you with your admission journey today?"
 
