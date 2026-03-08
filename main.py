@@ -13,7 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="VidyaSaarthi WhatsApp Webhook")
 
 VERIFY_TOKEN = "vidyasaarthi_secret_token_123"
-ACCESS_TOKEN = "EAAS2xeH0744BQ2yLTnpFFZCVNSxnpbFXXZBZAV4ZAsBGPdZCoAtcHcof23KjpXZCSXh4EMxOfS4HuQyUnWdTq0XJxeZA5WnnvpaZCbtW3hutm4ZAgYmujvhmjSkagt6oBAraweYzEQuCgpEsGFhmZAqBKmMq0dAT8pUZC4n18nPiSrsj7qemKlQsbjqA3MyBOZBTCTDkfILIc1BAZARNtJrrA0zHC0GZAI1yh437GZB90mHudoWiHZCcifezJ3ZCvsU2fyx86Jg78yGO9UJuBJDjwMkJVYC5RqzYiOLtLOq67JSMZD"
+ACCESS_TOKEN = "EAAS2xeH0744BQZC8rYylJ5L09zN7Eq8LchD4aZA14ENyGniX5lHYiCLfKkIgiAmZCZB7xDEZBCH5NXE6NNIlj2JNTTb6SSlC6k7F16FvPjwvUUHItQr2tjZBlL2Cl2gkr5A1pWZBDiNF9imwwIgDOWXBKDsjxzQ5Lyh9IxqXo4lxyD5LE6ZBfSbMbmb5dciz2eDxen8QReNpwZAa4Y1KqRL1WxeQEF9f8ZBzKO213Ya3ZA9JkB8ul1nGjGMmNRwifQXnpsMsgZCZCJ6ocO4rrM1awTKi9CnGp3wZCKwwnG3AZDZD"
 PHONE_NUMBER_ID = "950042731533532"
 
 
@@ -31,7 +31,12 @@ def send_whatsapp_reply(recipient_phone: str, reply_text: str):
         "type": "text",
         "text": {"preview_url": False, "body": reply_text}
     }
-    requests.post(url, headers=headers, json=payload)
+    response = requests.post(url, headers=headers, json=payload)
+
+    print(f"--- Meta API Debug ---", flush=True)
+    print(f"Status Code: {response.status_code}", flush=True)
+    print(f"Full Response: {response.text}", flush=True) # This tells you the TRUTH
+
 
 
 @app.get("/webhook")
@@ -50,15 +55,28 @@ async def verify_webhook(
 async def receive_message(request: Request, db: Session = Depends(get_db)):
     payload = await request.json()
 
+    # inbound_log = models.Message(phone_number='hi', message_text='hello', direction="inbound")
+    # db.add(inbound_log)
+    # db.commit()
+
     try:
         entry = payload.get("entry", [])[0]
         changes = entry.get("changes", [])[0]
         value = changes.get("value", {})
 
+        # inbound_log = models.Message(phone_number=entry, message_text=value, direction="inbound")
+        # db.add(inbound_log)
+        # db.commit()
+
         if "messages" in value:
             message = value["messages"][0]
             student_phone = message["from"]
             msg_type = message["type"]
+
+            # 2. Log the INBOUND message
+            inbound_log = models.Message(phone_number=student_phone, message_text=msg_type, direction="inbound")
+            db.add(inbound_log)
+            db.commit()
 
             if msg_type == "text":
                 text_body = message["text"]["body"]
@@ -93,21 +111,38 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 else:
                     reply_message = "Welcome! How can we help you with your admission journey today?"
 
-                # 4. Fire the API call
-                send_whatsapp_reply(student_phone, reply_message)
+            elif msg_type == "button":
+                button_text = message["button"]["text"]
+                print(f"Student clicked button: {button_text}", flush=True)
 
-                # 5. Log the OUTBOUND message
-                outbound_log = models.Message(phone_number=student_phone, message_text=reply_message,
-                                              direction="outbound")
-                db.add(outbound_log)
+                # 2. Log the INBOUND message
+                inbound_log = models.Message(phone_number=student_phone, message_text=button_text, direction="inbound")
+                db.add(inbound_log)
                 db.commit()
 
-                print(f"✅ Transaction complete and logged for {student_phone}")
+
+                if button_text.lower() == "yes":
+                    # Trigger JEE Calendar delivery
+                    print(f"In yes button condition: {button_text}", flush=True)
+                    reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
+                    # send_whatsapp_reply(student_phone, reply_message)
+
+            # 4. Fire the API call
+            send_whatsapp_reply(student_phone, reply_message)
+
+            # 5. Log the OUTBOUND message
+            outbound_log = models.Message(phone_number=student_phone, message_text=reply_message,
+                                          direction="outbound")
+            db.add(outbound_log)
+            db.commit()
+
+            print(f"✅ Transaction complete and logged for {student_phone}", flush=True)
+
+            return {"status": "success"}
 
     except Exception as e:
-        pass
-
-    return {"status": "success"}
+        print("Exception - {0}".format(e), flush=True)
+        return {"status": "failure"}
 
 
 if __name__ == "__main__":

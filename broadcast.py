@@ -4,11 +4,11 @@ from database import SessionLocal
 import models
 
 # --- Configuration ---
-ACCESS_TOKEN = "EAAS2xeH0744BQ76uT7dhqrZB7TrDBmZBovMR2ZAisp70MTtEiUuHKTit5gfrS89l2Ar0Jbu8EBLX8Aa4E0capGeGVhLdXj05lSfGaJxFgMbvbvGEHrnKHmSw3mQNkD8ZCnbVb4umDBHQLJ5uBAZA9t0l3DCpgqAOntvZBD1Tj3igYupnxz9JL4ZBHLSry1ZBLvYZBZAnVZBDaiVqZA7HxV5JU6ZBlZC1pjPnAng0LZAMbliSd6CTF2NCkjk5hB2OmVUvt3ytdWthu2tLsO1PVj1azAuYbLxFimU78Uoht09zgZDZD"  # Update if your 24hr token expired
-PHONE_NUMBER_ID = "950042731533532"  # The +1 555 Test Number ID
+ACCESS_TOKEN = "EAAS2xeH0744BQZC8rYylJ5L09zN7Eq8LchD4aZA14ENyGniX5lHYiCLfKkIgiAmZCZB7xDEZBCH5NXE6NNIlj2JNTTb6SSlC6k7F16FvPjwvUUHItQr2tjZBlL2Cl2gkr5A1pWZBDiNF9imwwIgDOWXBKDsjxzQ5Lyh9IxqXo4lxyD5LE6ZBfSbMbmb5dciz2eDxen8QReNpwZAa4Y1KqRL1WxeQEF9f8ZBzKO213Ya3ZA9JkB8ul1nGjGMmNRwifQXnpsMsgZCZCJ6ocO4rrM1awTKi9CnGp3wZCKwwnG3AZDZD"  # Update if your 24hr token expired
+PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 
-def send_template_message(recipient_phone: str, template_name: str):
+def send_template_message(recipient_phone: str, template_name: str, student_name: str):
     """Sends an approved Meta template message."""
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
     headers = {
@@ -22,10 +22,33 @@ def send_template_message(recipient_phone: str, template_name: str):
         "template": {
             "name": template_name,
             "language": {
-                "code": "en_US"
-            }
+                "code": "en"
+            },
+            "components": [
+                {
+                    "type": "header",
+                    "parameters": [
+                        {
+                            "type": "image",
+                            "image": {
+                                "id": "958645420044903"  # The ID you just generated
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "body",
+                    "parameters": [
+                        {
+                            "type": "text",
+                            "text": student_name  # This fills the {{1}} variable
+                        }
+                    ]
+                }
+            ]
         }
     }
+
 
     response = requests.post(url, headers=headers, json=payload)
     return response
@@ -47,7 +70,7 @@ def run_broadcast():
             target_number = student.phone_number
 
             # Send the API request (Using the sandbox template)
-            res = send_template_message(target_number, "hello_world")
+            res = send_template_message(target_number, "vs_jee_missed_exams", student.name)
 
             if res.status_code == 200:
                 print(f"✅ Sent successfully to {target_number}")
