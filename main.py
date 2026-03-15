@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Query, HTTPException, Depends
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 import uvicorn
-
+from broadcast import send_template_message
 from database import engine, get_db
 import models
 
@@ -13,7 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="VidyaSaarthi WhatsApp Webhook")
 
 VERIFY_TOKEN = "vidyasaarthi_secret_token_123"
-ACCESS_TOKEN = "EAAS2xeH0744BQZC8rYylJ5L09zN7Eq8LchD4aZA14ENyGniX5lHYiCLfKkIgiAmZCZB7xDEZBCH5NXE6NNIlj2JNTTb6SSlC6k7F16FvPjwvUUHItQr2tjZBlL2Cl2gkr5A1pWZBDiNF9imwwIgDOWXBKDsjxzQ5Lyh9IxqXo4lxyD5LE6ZBfSbMbmb5dciz2eDxen8QReNpwZAa4Y1KqRL1WxeQEF9f8ZBzKO213Ya3ZA9JkB8ul1nGjGMmNRwifQXnpsMsgZCZCJ6ocO4rrM1awTKi9CnGp3wZCKwwnG3AZDZD"
+ACCESS_TOKEN = "EAAS2xeH0744BQ13wuJbefNR7e9QKLx1nYlSRFOWMeK8nB5lSr0Q4yCZCeWbpizXpRnWqLJLLYZB4jSRZBjYYM6JCPSxx8oDZBNIgHEc9IcBVTBSZAydDYbqBiVFYAMGr04gZCyS8zKsn6zEik98aZB2fwF0k6qqjM9HDatcXJjbbsoO1q1lpkYL02oyWS7YVekWPPmbtlRAgCZBQRg2xcWwQSQQ2xlusPzhQMERyN6YHPJ48xpFm0p9rg2Pi6ur7JzYW6ZBHIniYDQ83VPdwZChUUdmihJxxtMqswrTQZDZD"
 PHONE_NUMBER_ID = "950042731533532"
 
 
@@ -73,17 +73,20 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
             student_phone = message["from"]
             msg_type = message["type"]
 
-            # 2. Log the INBOUND message
-            inbound_log = models.Message(phone_number=student_phone, message_text=msg_type, direction="inbound")
-            db.add(inbound_log)
-            db.commit()
+            # # 2. Log the INBOUND message
+            # inbound_log = models.Message(phone_number=student_phone, message_text=msg_type, direction="inbound")
+            # db.add(inbound_log)
+            # db.commit()
 
             if msg_type == "text":
                 text_body = message["text"]["body"]
 
                 # 1. Check if this is a new student; if so, add them to the DB
                 student = db.query(models.Student).filter(models.Student.phone_number == student_phone).first()
+                print(student, student_phone)
+
                 if not student:
+                    print("I am in not student condition")
                     student = models.Student(phone_number=student_phone)
                     db.add(student)
                     db.commit()
@@ -109,6 +112,8 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 elif text_lower == "yes":
                     reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
                 else:
+                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+
                     reply_message = "Welcome! How can we help you with your admission journey today?"
 
             elif msg_type == "button":
@@ -124,11 +129,13 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 if button_text.lower() == "yes":
                     # Trigger JEE Calendar delivery
                     print(f"In yes button condition: {button_text}", flush=True)
+                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+
                     reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
                     # send_whatsapp_reply(student_phone, reply_message)
 
             # 4. Fire the API call
-            send_whatsapp_reply(student_phone, reply_message)
+            # send_whatsapp_reply(student_phone, reply_message)
 
             # 5. Log the OUTBOUND message
             outbound_log = models.Message(phone_number=student_phone, message_text=reply_message,
@@ -147,3 +154,9 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+# SOP
+# change access token
+# ngrok.exe http 8000
+# python .\main.py
+# http://127.0.0.1:4040/inspect/http

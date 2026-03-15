@@ -4,7 +4,7 @@ from database import SessionLocal
 import models
 
 # --- Configuration ---
-ACCESS_TOKEN = "EAAS2xeH0744BQZC8rYylJ5L09zN7Eq8LchD4aZA14ENyGniX5lHYiCLfKkIgiAmZCZB7xDEZBCH5NXE6NNIlj2JNTTb6SSlC6k7F16FvPjwvUUHItQr2tjZBlL2Cl2gkr5A1pWZBDiNF9imwwIgDOWXBKDsjxzQ5Lyh9IxqXo4lxyD5LE6ZBfSbMbmb5dciz2eDxen8QReNpwZAa4Y1KqRL1WxeQEF9f8ZBzKO213Ya3ZA9JkB8ul1nGjGMmNRwifQXnpsMsgZCZCJ6ocO4rrM1awTKi9CnGp3wZCKwwnG3AZDZD"  # Update if your 24hr token expired
+ACCESS_TOKEN = "EAAS2xeH0744BQ13wuJbefNR7e9QKLx1nYlSRFOWMeK8nB5lSr0Q4yCZCeWbpizXpRnWqLJLLYZB4jSRZBjYYM6JCPSxx8oDZBNIgHEc9IcBVTBSZAydDYbqBiVFYAMGr04gZCyS8zKsn6zEik98aZB2fwF0k6qqjM9HDatcXJjbbsoO1q1lpkYL02oyWS7YVekWPPmbtlRAgCZBQRg2xcWwQSQQ2xlusPzhQMERyN6YHPJ48xpFm0p9rg2Pi6ur7JzYW6ZBHIniYDQ83VPdwZChUUdmihJxxtMqswrTQZDZD"  # Update if your 24hr token expired
 PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 
@@ -102,3 +102,9 @@ def run_broadcast():
 
 if __name__ == "__main__":
     run_broadcast()
+
+# SOP
+# change access token
+# ngrok.exe http 8000
+# python .\main.py
+# http://127.0.0.1:4040/inspect/http
