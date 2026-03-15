@@ -77,6 +77,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
             # inbound_log = models.Message(phone_number=student_phone, message_text=msg_type, direction="inbound")
             # db.add(inbound_log)
             # db.commit()
+            reply_message = ''
 
             if msg_type == "text":
                 text_body = message["text"]["body"]
@@ -104,13 +105,14 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                         db.commit()
 
                         # Send a confirmation of the opt-out
-                        reply_message = "You have been unsubscribed from VidyaSaarthi alerts. To re-subscribe, reply START."
+                        # reply_message = "You have been unsubscribed from VidyaSaarthi alerts. To re-subscribe, reply START."
                         # send_whatsapp_message(student_phone, reply)
                         # return {"status": "unsubscribed"}
 
                 # 3. Generate the reply
                 elif text_lower == "yes":
                     reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
+
                 else:
                     print("I am in new template")
                     send_template_message_with_no_parameters(recipient_phone=student_phone,template_name="vs_welcome_message_marketing")
@@ -134,6 +136,18 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
 
                     reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
                     # send_whatsapp_reply(student_phone, reply_message)
+
+                elif button_text.lower() == 'neet ug 2026':
+                    print(f"In NEET UG 2026  button condition: {button_text}", flush=True)
+                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+                elif button_text.lower() == 'jee 2026':
+                    print(f"In JEE 2026 button condition: {button_text}", flush=True)
+                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+                else:
+                    print(f"In else button condition: {button_text}", flush=True)
+                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+
+
 
             # 4. Fire the API call
             # send_whatsapp_reply(student_phone, reply_message)
