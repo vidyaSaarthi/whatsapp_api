@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Query, HTTPException, Depends
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 import uvicorn
-from broadcast import send_template_message
+from templates_library import send_template_message, send_template_message_with_no_parameters
 from database import engine, get_db
 import models
 
@@ -112,7 +112,8 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 elif text_lower == "yes":
                     reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
                 else:
-                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+                    print("I am in new template")
+                    send_template_message_with_no_parameters(recipient_phone=student_phone,template_name="vs_welcome_message_marketing")
 
                     reply_message = "Welcome! How can we help you with your admission journey today?"
 
@@ -157,6 +158,6 @@ if __name__ == "__main__":
 
 # SOP
 # change access token
-# ngrok.exe http 8000
+# ./ngrok.exe http 8000
 # python .\main.py
 # http://127.0.0.1:4040/inspect/http
