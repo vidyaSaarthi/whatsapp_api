@@ -1,6 +1,6 @@
 import requests
 
-ACCESS_TOKEN = "EAAS2xeH0744BQzEfVRxxISAkZAueH1SJGyioTvZB2332HaPwWsXziAbRep3nYHGA4U6ZBGKP9VsBZCbN3IkEXzjNyvCN277ETqjdDf3vYkkrlcL9EL1947PQ4Vri6XhEdiDr6Qn7ZAw7egstZCapGNs2nptayxZCfeBmdsowpAHcujxKn3VGFlMBF8yBYbuYC4QbKqs3NlaKZBfOAKHRTo7QNeSX8oqgkzkUZAcmDU6R8ZCjsipnYgDbVYgggORjEI8SNJ8KnEGcHt0RqD355yIjBa3bDtZAy8hqpnFGwZDZD"  # Update if your 24hr token expired
+ACCESS_TOKEN = "EAAS2xeH0744BQ0W5u5gw1ULPCJqAnsNTEICJPQxl3dJrDjE8VqZARWgL6DsPrtVEIB1T88rbPAeO26ukXRCxP0NV8AU0T3Kl1IJeeGZCwasZC9ZCoizWHxDvhIqZCmWsBxZCzIlIZBTtAi6N0iM00P55izHFk5dnf8CpenxEjvq6eqWRLIYbfV6WwVcA3J23e5hyZBPB55PYm2UstXhljagl260WsqpWWrTR98RCpCGwYSL5V3D6uVGkmPvkk1umYdgZA5JNPzv0XneGqDE8OVgMBpek2OcrhF0JWkgZDZD"
 PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 #vs_jee_missed_exams
@@ -27,7 +27,7 @@ def send_template_message(recipient_phone: str, template_name: str, student_name
                         {
                             "type": "image",
                             "image": {
-                                "id": "958645420044903"  # The ID you just generated
+                                "id": "1261148812127631"  # The ID you just generated
                             }
                         }
                     ]
@@ -74,3 +74,15 @@ def send_template_message_with_no_parameters(recipient_phone: str, template_name
 
     response = requests.post(url, headers=headers, json=payload)
     return response
+
+'''
+To get media id:-
+
+ACCESS_TOKEN = "EAAS2xeH0744BQzEfVRxxISAkZAueH1SJGyioTvZB2332HaPwWsXziAbRep3nYHGA4U6ZBGKP9VsBZCbN3IkEXzjNyvCN277ETqjdDf3vYkkrlcL9EL1947PQ4Vri6XhEdiDr6Qn7ZAw7egstZCapGNs2nptayxZCfeBmdsowpAHcujxKn3VGFlMBF8yBYbuYC4QbKqs3NlaKZBfOAKHRTo7QNeSX8oqgkzkUZAcmDU6R8ZCjsipnYgDbVYgggORjEI8SNJ8KnEGcHt0RqD355yIjBa3bDtZAy8hqpnFGwZDZD"  # Update if your 24hr token expired
+PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
+
+run below in cmd
+curl -X POST "https://graph.facebook.com/v18.0/987112257823129/media" -H "Authorization: Bearer EAAS2xeH0744BQ0bFoDSfdCdEle3jkzc5ZAdyVavL0Vvboze0AmhlQvxJM5cKgPjZBaPsjGN70uiLrT7EGirORG92EX5DNOmHlPq12uq7Do5PgPyTmZAygcg7xsFgkqoM2BYckLWdyLZBtcIc69FMmZBEXTILCGMlVX0zQ9OZBA7I5Bc6nC0y5ZCQVu2fXixQP9aH495TXhrSSlR6oVzEt2m5iF4Dal3ZCcHLaFQTKiB0bZBBS2gtV3P7PPjKl36oAn2lcf2nnEYheaYQmK9rYWymMAue2MAIB7QOHdJMZD"  -F "file=@C:/Users/Shubham Aggarwal/Downloads/jee_exams_pic_for_whtsapp_api.jpeg" -F "type=image/jpeg" -F "messaging_product=whatsapp"
+
+'''
+

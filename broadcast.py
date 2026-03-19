@@ -72,7 +72,7 @@ def run_broadcast():
             target_number = student.phone_number
 
             # Send the API request (Using the sandbox template)
-            res = send_template_message(target_number, "vs_jee_forms_closing_template", student.name)
+            res = send_template_message(target_number, "vs_jee_forms_closing_template_2", student.name)
 
             if res.status_code == 200:
                 print(f"✅ Sent successfully to {target_number}")
