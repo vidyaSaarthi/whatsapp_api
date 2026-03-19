@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Query, HTTPException, Depends
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 import uvicorn
-from templates_library import send_template_message, send_template_message_with_no_parameters
+from templates_library import send_template_message, send_template_message_with_no_parameters,ACCESS_TOKEN, PHONE_NUMBER_ID
 from database import engine, get_db
 import models
 
@@ -13,8 +13,8 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="VidyaSaarthi WhatsApp Webhook")
 
 VERIFY_TOKEN = "vidyasaarthi_secret_token_123"
-ACCESS_TOKEN = "EAAS2xeH0744BQ13wuJbefNR7e9QKLx1nYlSRFOWMeK8nB5lSr0Q4yCZCeWbpizXpRnWqLJLLYZB4jSRZBjYYM6JCPSxx8oDZBNIgHEc9IcBVTBSZAydDYbqBiVFYAMGr04gZCyS8zKsn6zEik98aZB2fwF0k6qqjM9HDatcXJjbbsoO1q1lpkYL02oyWS7YVekWPPmbtlRAgCZBQRg2xcWwQSQQ2xlusPzhQMERyN6YHPJ48xpFm0p9rg2Pi6ur7JzYW6ZBHIniYDQ83VPdwZChUUdmihJxxtMqswrTQZDZD"
-PHONE_NUMBER_ID = "950042731533532"
+# ACCESS_TOKEN = "EAAS2xeH0744BQ13wuJbefNR7e9QKLx1nYlSRFOWMeK8nB5lSr0Q4yCZCeWbpizXpRnWqLJLLYZB4jSRZBjYYM6JCPSxx8oDZBNIgHEc9IcBVTBSZAydDYbqBiVFYAMGr04gZCyS8zKsn6zEik98aZB2fwF0k6qqjM9HDatcXJjbbsoO1q1lpkYL02oyWS7YVekWPPmbtlRAgCZBQRg2xcWwQSQQ2xlusPzhQMERyN6YHPJ48xpFm0p9rg2Pi6ur7JzYW6ZBHIniYDQ83VPdwZChUUdmihJxxtMqswrTQZDZD"
+# PHONE_NUMBER_ID = "950042731533532"
 
 
 def send_whatsapp_reply(recipient_phone: str, reply_text: str):
@@ -55,6 +55,35 @@ async def verify_webhook(
 async def receive_message(request: Request, db: Session = Depends(get_db)):
     payload = await request.json()
 
+    value = payload.get("entry", [])[0].get("changes", [])[0].get("value", {})
+
+    # 🛠️ STEP 1: Detect Status Updates (Sent, Delivered, Read, Failed)
+    if "statuses" in value:
+        status_update = value["statuses"][0]
+        msg_id = status_update["id"]
+        status = status_update["status"]
+
+        # Look for the message in your DB using the wamid
+        db_msg = db.query(models.Message).filter(models.Message.message_id == msg_id).first()
+
+        if db_msg:
+            db_msg.status = status
+
+            # 🛠️ STEP 2: Handle Failures (e.g., Not on WhatsApp)
+            if status == "failed":
+                error = status_update.get("errors", [{}])[0]
+                error_code = error.get("code")
+                db_msg.error_message = error.get("title", "Unknown Error")
+
+                if error_code == 131030:  # Specific code for "Recipient not on WhatsApp"
+                    print(f"❌ {db_msg.phone_number} is NOT on WhatsApp.", flush=True)
+
+            db.commit()
+            print(f"📈 Status Updated: {db_msg.phone_number} is now {status}", flush=True)
+
+        return {"status": "success"}
+
+
     # inbound_log = models.Message(phone_number='hi', message_text='hello', direction="inbound")
     # db.add(inbound_log)
     # db.commit()
@@ -72,6 +101,9 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
             message = value["messages"][0]
             student_phone = message["from"]
             msg_type = message["type"]
+
+            # 🛠️ STEP 1: Extract the unique Message ID (wamid)
+            wamid = message["id"]
 
             # # 2. Log the INBOUND message
             # inbound_log = models.Message(phone_number=student_phone, message_text=msg_type, direction="inbound")
@@ -91,11 +123,6 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     student = models.Student(phone_number=student_phone)
                     db.add(student)
                     db.commit()
-
-                # 2. Log the INBOUND message
-                inbound_log = models.Message(phone_number=student_phone, message_text=text_body, direction="inbound")
-                db.add(inbound_log)
-                db.commit()
 
                 # 🆕 3. HANDLE OPT-OUT (STOP)
                 text_lower = text_body.lower()
@@ -117,37 +144,41 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     print("I am in new template")
                     send_template_message_with_no_parameters(recipient_phone=student_phone,template_name="vs_welcome_message_marketing")
 
-                    reply_message = "Welcome! How can we help you with your admission journey today?"
+                    # reply_message = "Welcome! How can we help you with your admission journey today?"
 
             elif msg_type == "button":
-                button_text = message["button"]["text"]
-                print(f"Student clicked button: {button_text}", flush=True)
+                text_body = message["button"]["text"]
+                print(f"Student clicked button: {text_body}", flush=True)
 
-                # 2. Log the INBOUND message
-                inbound_log = models.Message(phone_number=student_phone, message_text=button_text, direction="inbound")
-                db.add(inbound_log)
-                db.commit()
+                # # 2. Log the INBOUND message
+                # inbound_log = models.Message(phone_number=student_phone, message_text=button_text, direction="inbound")
+                # db.add(inbound_log)
+                # db.commit()
 
 
-                if button_text.lower() == "yes":
+                if text_body.lower() == "yes":
                     # Trigger JEE Calendar delivery
-                    print(f"In yes button condition: {button_text}", flush=True)
+                    print(f"In yes button condition: {text_body}", flush=True)
                     send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
 
-                    reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
+                    # reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
                     # send_whatsapp_reply(student_phone, reply_message)
 
-                elif button_text.lower() == 'neet ug 2026':
-                    print(f"In NEET UG 2026  button condition: {button_text}", flush=True)
+                elif text_body.lower() == 'neet ug 2026':
+                    print(f"In NEET UG 2026  button condition: {text_body}", flush=True)
                     send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
-                elif button_text.lower() == 'jee 2026':
-                    print(f"In JEE 2026 button condition: {button_text}", flush=True)
+                elif text_body.lower() == 'jee 2026':
+                    print(f"In JEE 2026 button condition: {text_body}", flush=True)
                     send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
                 else:
-                    print(f"In else button condition: {button_text}", flush=True)
+                    print(f"In else button condition: {text_body}", flush=True)
                     send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
 
-
+            # 2. Log the INBOUND message
+            inbound_log = models.Message(message_id=wamid, phone_number=student_phone, message_text=text_body,
+                                         direction="inbound", status="received")
+            db.add(inbound_log)
+            db.commit()
 
             # 4. Fire the API call
             # send_whatsapp_reply(student_phone, reply_message)

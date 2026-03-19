@@ -6,55 +6,8 @@ from templates_library import send_template_message, send_template_message_with_
 
 
 # --- Configuration ---
-# ACCESS_TOKEN = "EAAS2xeH0744BQ13wuJbefNR7e9QKLx1nYlSRFOWMeK8nB5lSr0Q4yCZCeWbpizXpRnWqLJLLYZB4jSRZBjYYM6JCPSxx8oDZBNIgHEc9IcBVTBSZAydDYbqBiVFYAMGr04gZCyS8zKsn6zEik98aZB2fwF0k6qqjM9HDatcXJjbbsoO1q1lpkYL02oyWS7YVekWPPmbtlRAgCZBQRg2xcWwQSQQ2xlusPzhQMERyN6YHPJ48xpFm0p9rg2Pi6ur7JzYW6ZBHIniYDQ83VPdwZChUUdmihJxxtMqswrTQZDZD"  # Update if your 24hr token expired
-# PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
-
-# def send_template_message(recipient_phone: str, template_name: str, student_name: str):
-#     """Sends an approved Meta template message."""
-#     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
-#     headers = {
-#         "Authorization": f"Bearer {ACCESS_TOKEN}",
-#         "Content-Type": "application/json"
-#     }
-#     payload = {
-#         "messaging_product": "whatsapp",
-#         "to": recipient_phone,
-#         "type": "template",
-#         "template": {
-#             "name": template_name,
-#             "language": {
-#                 "code": "en"
-#             },
-#             "components": [
-#                 {
-#                     "type": "header",
-#                     "parameters": [
-#                         {
-#                             "type": "image",
-#                             "image": {
-#                                 "id": "958645420044903"  # The ID you just generated
-#                             }
-#                         }
-#                     ]
-#                 },
-#                 {
-#                     "type": "body",
-#                     "parameters": [
-#                         {
-#                             "type": "text",
-#                             "text": student_name  # This fills the {{1}} variable
-#                         }
-#                     ]
-#                 }
-#             ]
-#         }
-#     }
-#
-#
-#     response = requests.post(url, headers=headers, json=payload)
-#     return response
-
+TEMPLATE_NAME ='vs_jee_forms_closing_template_2'
 
 def run_broadcast():
     # 1. Open database session
@@ -72,20 +25,29 @@ def run_broadcast():
             target_number = student.phone_number
 
             # Send the API request (Using the sandbox template)
-            res = send_template_message(target_number, "vs_jee_forms_closing_template_2", student.name)
+            res = send_template_message(target_number, TEMPLATE_NAME , student.name)
+            data = res.json()
 
             if res.status_code == 200:
                 print(f"✅ Sent successfully to {target_number}")
 
+                # 🛠️ Extract the message ID from Meta's response
+                wamid = data['messages'][0]['id']
+
+
                 # 4. Log the broadcast in the database
                 log_entry = models.Message(
+                    message_id=wamid,
                     phone_number=target_number,
-                    message_text="[BROADCAST: hello_world]",
-                    direction="outbound"
+                    message_text=f"Template : {TEMPLATE_NAME}",
+                    direction="outbound",
+                    status="sent"
                 )
                 db.add(log_entry)
+                db.commit()
+                print(f"✅ Sent to {student.phone_number} (ID: {wamid})", flush=True)
             else:
-                print(f"❌ Failed to send to {target_number}: {res.text}")
+                print(f"❌ Failed for {student.phone_number}: {data}", flush=True)
 
             # 5. Rate Limiting Protection
             # Meta allows high throughput, but a slight delay prevents sudden spikes
