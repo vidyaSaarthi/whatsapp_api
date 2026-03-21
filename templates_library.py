@@ -4,8 +4,10 @@ ACCESS_TOKEN = "EAAS2xeH0744BQ0W5u5gw1ULPCJqAnsNTEICJPQxl3dJrDjE8VqZARWgL6DsPrtV
 PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 #vs_jee_missed_exams
-def send_template_message_with_image_id(recipient_phone: str, template_name: str, student_name: str):
-    """Sends an approved Meta template message."""
+import requests
+
+def send_template_message_without_image_id(recipient_phone: str, template_name: str, student_name: str):
+    """Sends an approved Meta template message containing ONLY a text variable {{1}}."""
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
@@ -17,9 +19,7 @@ def send_template_message_with_image_id(recipient_phone: str, template_name: str
         "type": "template",
         "template": {
             "name": template_name,
-            "language": {
-                "code": "en"
-            },
+            "language": {"code": "en"},
             "components": [
                 {
                     "type": "body",
@@ -34,9 +34,16 @@ def send_template_message_with_image_id(recipient_phone: str, template_name: str
         }
     }
 
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        return response
+    except Exception as e:
+        print(f"❌ Error sending template without image: {e}")
+        return None
 
-def send_template_message_without_image_id(recipient_phone: str, template_name: str, student_name: str):
-    """Sends an approved Meta template message."""
+
+def send_template_message_with_image_id(recipient_phone: str, template_name: str, student_name: str, image_id: str):
+    """Sends an approved Meta template message containing an Image Header and a text variable {{1}}."""
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
@@ -48,9 +55,7 @@ def send_template_message_without_image_id(recipient_phone: str, template_name: 
         "type": "template",
         "template": {
             "name": template_name,
-            "language": {
-                "code": "en"
-            },
+            "language": {"code": "en"},
             "components": [
                 {
                     "type": "header",
@@ -58,7 +63,7 @@ def send_template_message_without_image_id(recipient_phone: str, template_name: 
                         {
                             "type": "image",
                             "image": {
-                                "id": "1261148812127631"  # The ID you just generated
+                                "id": image_id  # 🆕 Now dynamic so you can reuse this function
                             }
                         }
                     ]
@@ -76,16 +81,17 @@ def send_template_message_without_image_id(recipient_phone: str, template_name: 
         }
     }
 
-
-    response = requests.post(url, headers=headers, json=payload)
-    return response
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        return response
+    except Exception as e:
+        print(f"❌ Error sending template with image: {e}")
+        return None
 
 
 def send_template_message_with_no_parameters(recipient_phone: str, template_name: str):
-    """Sends an approved Meta template message."""
+    """Sends a purely static approved Meta template message."""
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
-
-    print(recipient_phone,template_name)
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
         "Content-Type": "application/json"
@@ -96,16 +102,16 @@ def send_template_message_with_no_parameters(recipient_phone: str, template_name
         "type": "template",
         "template": {
             "name": template_name,
-            "language": {
-                "code": "en"
-            },
+            "language": {"code": "en"},
         }
     }
 
-
-    response = requests.post(url, headers=headers, json=payload)
-    return response
-
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        return response
+    except Exception as e:
+        print(f"❌ Error sending static template: {e}")
+        return None
 '''
 To get media id:-
 
