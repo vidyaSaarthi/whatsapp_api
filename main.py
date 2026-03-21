@@ -148,8 +148,11 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 print(f"🛑 {student_phone} opted out.", flush=True)
                 # Optional: Send an opt-out confirmation template here
             elif msg_type == "text":
-                template_sent = "vs_welcome_message_marketing"
-                api_response = send_template_message_with_no_parameters(student_phone, template_sent)
+                if text_lower == 'call':
+                    pass #Telegram Alert
+                else:
+                    template_sent = "vs_welcome_message_marketing"
+                    api_response = send_template_message_with_no_parameters(student_phone, template_sent)
 
             elif msg_type == "button":
                 print(f"🔘 Student clicked: {text_body}", flush=True)
@@ -172,6 +175,8 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Apply with Guidance'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Request Callback'.lower():
+                    pass #reply mesage should go , #telgram alert
                 else:
                     api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
                                                              template_name="vs_welcome_message_marketing")
