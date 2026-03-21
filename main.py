@@ -93,9 +93,11 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
         changes = entry.get("changes", [])[0]
         value = changes.get("value", {})
 
+
         # inbound_log = models.Message(phone_number=entry, message_text=value, direction="inbound")
         # db.add(inbound_log)
         # db.commit()
+
 
         if "messages" in value:
             message = value["messages"][0]
@@ -105,78 +107,90 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
             # 🛠️ STEP 1: Extract the unique Message ID (wamid)
             wamid = message["id"]
 
-            # # 2. Log the INBOUND message
-            # inbound_log = models.Message(phone_number=student_phone, message_text=msg_type, direction="inbound")
-            # db.add(inbound_log)
-            # db.commit()
-            reply_message = ''
+            # 🛠️ FIX 1: Ensure student exists REGARDLESS of message type
+            student = db.query(models.Student).filter(models.Student.phone_number == student_phone).first()
+            if not student:
+                print(f"👤 Adding new student: {student_phone}", flush=True)
+                student = models.Student(phone_number=student_phone, opt_in_status=True)
+                db.add(student)
+                db.commit()
 
             if msg_type == "text":
                 text_body = message["text"]["body"]
-
-                # 1. Check if this is a new student; if so, add them to the DB
-                student = db.query(models.Student).filter(models.Student.phone_number == student_phone).first()
-                print(student, student_phone)
-
-                if not student:
-                    print("I am in not student condition")
-                    student = models.Student(phone_number=student_phone)
-                    db.add(student)
-                    db.commit()
-
-                # 🆕 3. HANDLE OPT-OUT (STOP)
-                text_lower = text_body.lower()
-                if text_lower == "stop":
-                    if student:
-                        student.opt_in_status = False
-                        db.commit()
-
-                else:
-                    print("I am in new template")
-                    send_template_message_with_no_parameters(recipient_phone=student_phone,template_name="vs_welcome_message_marketing")
-
-                    # reply_message = "Welcome! How can we help you with your admission journey today?"
-
             elif msg_type == "button":
                 text_body = message["button"]["text"]
-                print(f"Student clicked button: {text_body}", flush=True)
+            else:
+                text_body = f"Unsupported type: {msg_type}"
 
-                # 2. Log the INBOUND message
-                inbound_log = models.Message(message_id=wamid, phone_number=student_phone, message_text=text_body,
-                                             direction="inbound", status="received")
+            # 🛠️ FIX 2: Unified INBOUND logging (Works for text AND buttons)
+            inbound_log = models.Message(
+                message_id=wamid,
+                phone_number=student_phone,
+                message_text=text_body,
+                direction="inbound",
+                status="received"
+            )
+
+            # Prevent duplicate logging
+            existing = db.query(models.Message).filter(models.Message.message_id == wamid).first()
+            if not existing:
                 db.add(inbound_log)
                 db.commit()
 
+            # --- DECISION LOGIC ---
+            text_lower = text_body.lower()
+            api_response = None
+            template_sent = ""
+
+            if text_lower == "stop":
+                student.opt_in_status = False
+                db.commit()
+                print(f"🛑 {student_phone} opted out.", flush=True)
+                # Optional: Send an opt-out confirmation template here
+            elif msg_type == "text":
+                template_sent = "vs_welcome_message_marketing"
+                api_response = send_template_message_with_no_parameters(student_phone, template_sent)
+
+            elif msg_type == "button":
+                print(f"🔘 Student clicked: {text_body}", flush=True)
 
                 if text_body.lower() == "Shortlisted exams".lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Find my best exam'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Govt. Colleges'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Private Colleges'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Back up options'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Talk to expert'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    student.opt_in_status = False
+                    db.commit()
                 elif text_body.lower() == 'Stop'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Apply with Guidance'.lower():
-                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                else:
+                    api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
+                                                             template_name="vs_welcome_message_marketing")
 
+            # 🛠️ FIX 3: Capture and log the OUTBOUND message
+            if api_response and api_response.status_code == 200:
+                outbound_data = api_response.json()
+                outbound_wamid = outbound_data['messages'][0]['id']
 
-
-            # 4. Fire the API call
-            # send_whatsapp_reply(student_phone, reply_message)
-
-            # 5. Log the OUTBOUND message
-            # outbound_log = models.Message(phone_number=student_phone, message_text=reply_message,
-            #                               direction="outbound")
-            # db.add(outbound_log)
-            # db.commit()
-
-            print(f"✅ Transaction complete and logged for {student_phone}", flush=True)
+                outbound_log = models.Message(
+                    message_id=outbound_wamid,
+                    phone_number=student_phone,
+                    message_text=f"Template: {template_sent}",
+                    direction="outbound",
+                    status="sent"
+                )
+                db.add(outbound_log)
+                db.commit()
+                print(f"✅ Outbound logged for {student_phone} (ID: {outbound_wamid})", flush=True)
 
             return {"status": "success"}
 
