@@ -31,11 +31,16 @@ def send_whatsapp_reply(recipient_phone: str, reply_text: str):
         "type": "text",
         "text": {"preview_url": False, "body": reply_text}
     }
-    response = requests.post(url, headers=headers, json=payload)
-
-    print(f"--- Meta API Debug ---", flush=True)
-    print(f"Status Code: {response.status_code}", flush=True)
-    print(f"Full Response: {response.text}", flush=True) # This tells you the TRUTH
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        return response
+    except Exception as e:
+        print(f"❌ Error sending text reply: {e}", flush=True)
+        return None
+    #
+    # print(f"--- Meta API Debug ---", flush=True)
+    # print(f"Status Code: {response.status_code}", flush=True)
+    # print(f"Full Response: {response.text}", flush=True) # This tells you the TRUTH
 
 
 
@@ -149,7 +154,13 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 # Optional: Send an opt-out confirmation template here
             elif msg_type == "text":
                 if text_lower == 'call':
-                    pass #Telegram Alert
+                    print(f"📞 {student_phone} requested a callback!", flush=True)
+                    # 1. Send the confirmation to the student
+                    reply_text = "Thank you! A VidyaSaarthi expert will call you shortly to assist with your admission journey."
+                    api_response = send_whatsapp_reply(student_phone, reply_text)
+                    template_sent = "Freeform: Callback Confirmation"
+
+                    # send_team_alert(student_phone, "URGENT 📞: Student explicitly requested a CALL back right now!")
                 else:
                     template_sent = "vs_welcome_message_marketing"
                     api_response = send_template_message_with_no_parameters(student_phone, template_sent)
