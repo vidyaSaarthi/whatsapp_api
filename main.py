@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Query, HTTPException, Depends
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 import uvicorn
-from templates_library import send_template_message, send_template_message_with_no_parameters,ACCESS_TOKEN, PHONE_NUMBER_ID
+from templates_library import send_template_message_with_image_id, send_template_message_without_image_id, send_template_message_with_no_parameters,ACCESS_TOKEN, PHONE_NUMBER_ID
 from database import engine, get_db
 import models
 
@@ -131,15 +131,6 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                         student.opt_in_status = False
                         db.commit()
 
-                        # Send a confirmation of the opt-out
-                        # reply_message = "You have been unsubscribed from VidyaSaarthi alerts. To re-subscribe, reply START."
-                        # send_whatsapp_message(student_phone, reply)
-                        # return {"status": "unsubscribed"}
-
-                # 3. Generate the reply
-                elif text_lower == "yes":
-                    reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
-
                 else:
                     print("I am in new template")
                     send_template_message_with_no_parameters(recipient_phone=student_phone,template_name="vs_welcome_message_marketing")
@@ -150,44 +141,40 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 text_body = message["button"]["text"]
                 print(f"Student clicked button: {text_body}", flush=True)
 
-                # # 2. Log the INBOUND message
-                # inbound_log = models.Message(phone_number=student_phone, message_text=button_text, direction="inbound")
-                # db.add(inbound_log)
-                # db.commit()
+                # 2. Log the INBOUND message
+                inbound_log = models.Message(message_id=wamid, phone_number=student_phone, message_text=text_body,
+                                             direction="inbound", status="received")
+                db.add(inbound_log)
+                db.commit()
 
 
-                if text_body.lower() == "yes":
-                    # Trigger JEE Calendar delivery
-                    print(f"In yes button condition: {text_body}", flush=True)
-                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
+                if text_body.lower() == "Shortlisted exams".lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Find my best exam'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Govt. Colleges'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Private Colleges'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Back up options'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Talk to expert'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Stop'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                elif text_body.lower() == 'Apply with Guidance'.lower():
+                    send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
 
-                    # reply_message = "Hi! We are preparing the exam calender for you. A counselor will connect youshortly."
-                    # send_whatsapp_reply(student_phone, reply_message)
 
-                elif text_body.lower() == 'neet ug 2026':
-                    print(f"In NEET UG 2026  button condition: {text_body}", flush=True)
-                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
-                elif text_body.lower() == 'jee 2026':
-                    print(f"In JEE 2026 button condition: {text_body}", flush=True)
-                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
-                else:
-                    print(f"In else button condition: {text_body}", flush=True)
-                    send_template_message(student_phone, "vs_jee_missed_exams", 'Shubham')
-
-            # 2. Log the INBOUND message
-            inbound_log = models.Message(message_id=wamid, phone_number=student_phone, message_text=text_body,
-                                         direction="inbound", status="received")
-            db.add(inbound_log)
-            db.commit()
 
             # 4. Fire the API call
             # send_whatsapp_reply(student_phone, reply_message)
 
             # 5. Log the OUTBOUND message
-            outbound_log = models.Message(phone_number=student_phone, message_text=reply_message,
-                                          direction="outbound")
-            db.add(outbound_log)
-            db.commit()
+            # outbound_log = models.Message(phone_number=student_phone, message_text=reply_message,
+            #                               direction="outbound")
+            # db.add(outbound_log)
+            # db.commit()
 
             print(f"✅ Transaction complete and logged for {student_phone}", flush=True)
 

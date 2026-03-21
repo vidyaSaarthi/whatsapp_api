@@ -4,7 +4,38 @@ ACCESS_TOKEN = "EAAS2xeH0744BQ0W5u5gw1ULPCJqAnsNTEICJPQxl3dJrDjE8VqZARWgL6DsPrtV
 PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 #vs_jee_missed_exams
-def send_template_message(recipient_phone: str, template_name: str, student_name: str):
+def send_template_message_with_image_id(recipient_phone: str, template_name: str, student_name: str):
+    """Sends an approved Meta template message."""
+    url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": recipient_phone,
+        "type": "template",
+        "template": {
+            "name": template_name,
+            "language": {
+                "code": "en"
+            },
+            "components": [
+                {
+                    "type": "body",
+                    "parameters": [
+                        {
+                            "type": "text",
+                            "text": student_name  # This fills the {{1}} variable
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+
+def send_template_message_without_image_id(recipient_phone: str, template_name: str, student_name: str):
     """Sends an approved Meta template message."""
     url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
     headers = {
