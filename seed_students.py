@@ -80,4 +80,5 @@ def add_new_student(phone: str, name: str):
 
 if __name__ == "__main__":
     # import_students_from_excel("students_list.xlsx")
-    add_new_student("918377837545", "Shubham Aggarwal")
+    # add_new_student("918377837545", "Shubham Aggarwal")
+    add_new_student("919896904939", "VidyaSaarthi Vivekam")

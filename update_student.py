@@ -46,5 +46,5 @@ def update_student_opt_in_status(phone, new_status):
 
 
 if __name__ == "__main__":
-    # update_student_name("918377837545", "Shubham Aggarwal")
-    update_student_opt_in_status("918377837545",True)
+    update_student_name("919896490308", "Vinay Singh Raghuvanshi")
+    # update_student_opt_in_status("918377837545",True)

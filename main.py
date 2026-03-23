@@ -78,10 +78,17 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
             if status == "failed":
                 error = status_update.get("errors", [{}])[0]
                 error_code = error.get("code")
+                error_msg = error.get("message", "Unknown Error")
                 db_msg.error_message = error.get("title", "Unknown Error")
 
                 if error_code == 131030:  # Specific code for "Recipient not on WhatsApp"
                     print(f"❌ {db_msg.phone_number} is NOT on WhatsApp.", flush=True)
+                elif "ecosystem" in error_msg.lower() or "spam" in error_msg.lower():
+                    print(f"⚠️ Ecosystem Block! Deactivating student: {db_msg.phone_number}", flush=True)
+                    student = db.query(models.Student).filter(
+                        models.Student.phone_number == db_msg.phone_number).first()
+                    if student:
+                        student.opt_in_status = False
 
             db.commit()
             print(f"📈 Status Updated: {db_msg.phone_number} is now {status}", flush=True)
@@ -162,6 +169,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
 
                     # send_team_alert(student_phone, "URGENT 📞: Student explicitly requested a CALL back right now!")
                 else:
+                    # print("I am in else",student_phone,template_sent)
                     template_sent = "vs_welcome_message_marketing"
                     api_response = send_template_message_with_no_parameters(student_phone, template_sent)
 
