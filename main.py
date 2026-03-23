@@ -171,23 +171,27 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 if text_body.lower() == "Shortlisted exams".lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
                 elif text_body.lower() == 'Find my best exam'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_find_my_best_exam")
                 elif text_body.lower() == 'Govt. Colleges'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_govt_colleges")
                 elif text_body.lower() == 'Private Colleges'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_private_colleges")
                 elif text_body.lower() == 'Back up options'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_show_backup_options")
                 elif text_body.lower() == 'Talk to expert'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_talk_to_expert")
                     student.opt_in_status = False
                     db.commit()
                 elif text_body.lower() == 'Stop'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_stop")
                 elif text_body.lower() == 'Apply with Guidance'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_apply_with_guidance")
                 elif text_body.lower() == 'Request Callback'.lower():
-                    pass #reply mesage should go , #telgram alert
+                    # pass #reply mesage should go , #telgram alert
+                    reply_text = "Thank you! A VidyaSaarthi expert will call you shortly to assist with your admission journey."
+                    api_response = send_whatsapp_reply(student_phone, reply_text)
+                    template_sent = "Freeform: Callback Confirmation"
+
                 else:
                     api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
                                                              template_name="vs_welcome_message_marketing")
