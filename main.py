@@ -160,7 +160,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 print(f"🛑 {student_phone} opted out.", flush=True)
                 # Optional: Send an opt-out confirmation template here
             elif msg_type == "text":
-                if text_lower == 'call':
+                if "call" in text_lower:
                     print(f"📞 {student_phone} requested a callback!", flush=True)
                     # 1. Send the confirmation to the student
                     reply_text = "Thank you! A VidyaSaarthi expert will call you shortly to assist with your admission journey."
@@ -204,6 +204,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
                                                              template_name="vs_welcome_message_marketing")
 
+            print(api_response,api_response.status_code,api_response.json(),api_response.json()['messages'][0]['id'])
             # 🛠️ FIX 3: Capture and log the OUTBOUND message
             if api_response and api_response.status_code == 200:
                 outbound_data = api_response.json()

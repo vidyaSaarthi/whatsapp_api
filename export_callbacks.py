@@ -17,7 +17,7 @@ def export_callbacks_to_excel():
     try:
         callback_records = db.query(models.Message, models.Student) \
             .join(models.Student, models.Message.phone_number == models.Student.phone_number) \
-            .filter(models.Message.message_text == "Request Callback") \
+            .filter(models.Message.message_text == "Request Callback" or models.Message.message_text.ilike("%call%")) \
             .order_by(desc(models.Message.timestamp)) \
             .all()
 
