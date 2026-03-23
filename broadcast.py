@@ -25,7 +25,7 @@ def run_broadcast():
             # 🛠️ FIX 2: Inner Error Handling (Protects the Loop)
             try:
                 # Send the API request
-                res = send_template_message_without_image_id(target_number, TEMPLATE_NAME, safe_name)
+                res = send_template_message_with_image_id(target_number, TEMPLATE_NAME, safe_name, '1475964460909120')
 
                 # 🛠️ FIX 3: Prevent crash if the function returned None due to a network error
                 if res is None:

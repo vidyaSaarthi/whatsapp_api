@@ -38,5 +38,46 @@ def import_students_from_excel(file_path):
         db.close()
 
 
+def add_new_student(phone: str, name: str):
+    """Seeds a single new student into the database."""
+    db = SessionLocal()
+
+    try:
+        # 1. Clean the inputs (removes accidental spaces from copy/pasting)
+        clean_phone = str(phone).strip()
+        clean_name = str(name).strip()
+
+        # 2. Prevent Database Crashes: Check if the number already exists
+        existing_student = db.query(models.Student).filter(models.Student.phone_number == clean_phone).first()
+
+        if existing_student:
+            print(f"⚠️ Notice: The number {clean_phone} is already registered to {existing_student.name}.")
+            # Return the existing student so your code can still use it if needed
+            return existing_student
+
+        # 3. Create the new student profile
+        new_student = models.Student(
+            phone_number=clean_phone,
+            name=clean_name,
+            opt_in_status=True  # We assume if you are manually seeding them, they are opted in
+        )
+
+        # 4. Save to the database
+        db.add(new_student)
+        db.commit()
+
+        print(f"✅ Successfully seeded new student: {clean_name} ({clean_phone})")
+        return new_student
+
+    except Exception as e:
+        # If anything goes wrong, rollback so the database doesn't lock up
+        db.rollback()
+        print(f"❌ Error seeding student: {e}")
+        return None
+    finally:
+        db.close()
+
+
 if __name__ == "__main__":
-    import_students_from_excel("students_list.xlsx")
+    # import_students_from_excel("students_list.xlsx")
+    add_new_student("918377837545", "Shubham Aggarwal")

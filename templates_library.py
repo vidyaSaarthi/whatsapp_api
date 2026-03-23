@@ -1,6 +1,6 @@
 import requests
 
-ACCESS_TOKEN = "EAAS2xeH0744BQ0W5u5gw1ULPCJqAnsNTEICJPQxl3dJrDjE8VqZARWgL6DsPrtVEIB1T88rbPAeO26ukXRCxP0NV8AU0T3Kl1IJeeGZCwasZC9ZCoizWHxDvhIqZCmWsBxZCzIlIZBTtAi6N0iM00P55izHFk5dnf8CpenxEjvq6eqWRLIYbfV6WwVcA3J23e5hyZBPB55PYm2UstXhljagl260WsqpWWrTR98RCpCGwYSL5V3D6uVGkmPvkk1umYdgZA5JNPzv0XneGqDE8OVgMBpek2OcrhF0JWkgZDZD"
+ACCESS_TOKEN = "EAAS2xeH0744BRG1K05rPZASSurVQILom4Jdl6cPyWZANbZBqaLlITQC0ZBn7T085J48Mj8K9f02SUMK6SiPDep44ORVE8oMZAX2fTSIUQiGorMNZAhNA4vfZAQrZBjDZCEaMA1LgM9yfV5QZATSH0EvfTybjYZBVNVZA9lLUO9DUFOHpvaoZAak5BQxAMgnp9jhOMtZCrzTkDSkpfVtqKYwr5UxkYqiqZAfLQsc6hOjz2oOO4LC8dAugb6goQHWRWZB9npxkiuZBZAm7Sauye01KC2IeBaU1zjbSzsmArCDlpaRwZDZD"
 PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 #vs_jee_missed_exams
@@ -119,7 +119,7 @@ ACCESS_TOKEN = "EAAS2xeH0744BQzEfVRxxISAkZAueH1SJGyioTvZB2332HaPwWsXziAbRep3nYHG
 PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
 
 run below in cmd
-curl -X POST "https://graph.facebook.com/v18.0/987112257823129/media" -H "Authorization: Bearer EAAS2xeH0744BQ0bFoDSfdCdEle3jkzc5ZAdyVavL0Vvboze0AmhlQvxJM5cKgPjZBaPsjGN70uiLrT7EGirORG92EX5DNOmHlPq12uq7Do5PgPyTmZAygcg7xsFgkqoM2BYckLWdyLZBtcIc69FMmZBEXTILCGMlVX0zQ9OZBA7I5Bc6nC0y5ZCQVu2fXixQP9aH495TXhrSSlR6oVzEt2m5iF4Dal3ZCcHLaFQTKiB0bZBBS2gtV3P7PPjKl36oAn2lcf2nnEYheaYQmK9rYWymMAue2MAIB7QOHdJMZD"  -F "file=@C:/Users/Shubham Aggarwal/Downloads/jee_exams_pic_for_whtsapp_api.jpeg" -F "type=image/jpeg" -F "messaging_product=whatsapp"
+curl -X POST "https://graph.facebook.com/v18.0/987112257823129/media" -H @{ "Authorization: Bearer EAAS2xeH0744BRG1K05rPZASSurVQILom4Jdl6cPyWZANbZBqaLlITQC0ZBn7T085J48Mj8K9f02SUMK6SiPDep44ORVE8oMZAX2fTSIUQiGorMNZAhNA4vfZAQrZBjDZCEaMA1LgM9yfV5QZATSH0EvfTybjYZBVNVZA9lLUO9DUFOHpvaoZAak5BQxAMgnp9jhOMtZCrzTkDSkpfVtqKYwr5UxkYqiqZAfLQsc6hOjz2oOO4LC8dAugb6goQHWRWZB9npxkiuZBZAm7Sauye01KC2IeBaU1zjbSzsmArCDlpaRwZDZD" }  -F "file=@C:/Users/Shubham Aggarwal/Downloads/jee_exams_pic_for_whtsapp_api.jpeg" -F "type=image/jpeg" -F "messaging_product=whatsapp"
 
 '''
 
