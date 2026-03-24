@@ -185,7 +185,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_govt_colleges")
                 elif text_body.lower() == 'Private Colleges'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_private_colleges")
-                elif text_body.lower() == 'Back up options'.lower():
+                elif text_body.lower() == 'Backup options'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_show_backup_options")
                 elif text_body.lower() == 'Talk to expert'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_talk_to_expert")
