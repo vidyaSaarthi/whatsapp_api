@@ -38,7 +38,7 @@ def import_students_from_excel(file_path):
         db.close()
 
 
-def add_new_student(phone: str, name: str):
+def add_new_student(phone: str, name: str, campaign = ''):
     """Seeds a single new student into the database."""
     db = SessionLocal()
 
@@ -59,7 +59,8 @@ def add_new_student(phone: str, name: str):
         new_student = models.Student(
             phone_number=clean_phone,
             name=clean_name,
-            opt_in_status=True  # We assume if you are manually seeding them, they are opted in
+            opt_in_status=True,  # We assume if you are manually seeding them, they are opted in
+            campaign_tags=campaign
         )
 
         # 4. Save to the database
@@ -81,6 +82,8 @@ def add_new_student(phone: str, name: str):
 if __name__ == "__main__":
     # import_students_from_excel("students_list.xlsx")
     # add_new_student("918377837545", "Shubham Aggarwal")
-    add_new_student("919711598957", "Shruti Aggarwal")
-    add_new_student("918570068710", "Shruti Aggarwal JEE")
+    # add_new_student("919711598957", "Shruti Aggarwal")
+    # add_new_student("918570068710", "Shruti Aggarwal JEE")
+
+    add_new_student('919205774007', "Saanvi Singla", 'JEE')
     # add_new_student("919896904939", "VidyaSaarthi Vivekam")

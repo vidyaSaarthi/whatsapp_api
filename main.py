@@ -123,7 +123,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
             student = db.query(models.Student).filter(models.Student.phone_number == student_phone).first()
             if not student:
                 print(f"👤 Adding new student: {student_phone}", flush=True)
-                student = models.Student(phone_number=student_phone, opt_in_status=True)
+                student = models.Student(phone_number=student_phone, name="Organic Lead (Name Unknown)", opt_in_status=True, campaign_tags="organic_inbound")
                 db.add(student)
                 db.commit()
 
@@ -158,6 +158,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                 student.opt_in_status = False
                 db.commit()
                 print(f"🛑 {student_phone} opted out.", flush=True)
+                api_response = send_template_message_with_no_parameters(student_phone, "va_jee_stop")
                 # Optional: Send an opt-out confirmation template here
             elif msg_type == "text":
                 if "call" in text_lower:
@@ -188,10 +189,10 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_show_backup_options")
                 elif text_body.lower() == 'Talk to expert'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_talk_to_expert")
-                    student.opt_in_status = False
-                    db.commit()
-                elif text_body.lower() == 'Stop'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_stop")
+                # elif text_body.lower() == 'Stop'.lower():
+                #     api_response = send_template_message_with_no_parameters(student_phone, "va_jee_stop")
+                #     student.opt_in_status = False
+                #     db.commit()
                 elif text_body.lower() == 'Apply with Guidance'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_apply_with_guidance")
                 elif text_body.lower() == 'Request Callback'.lower():
@@ -204,7 +205,7 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
                                                              template_name="vs_welcome_message_marketing")
 
-            print(api_response,api_response.status_code,api_response.json(),api_response.json()['messages'][0]['id'])
+            print(api_response,api_response.status_code,api_response.json())
             # 🛠️ FIX 3: Capture and log the OUTBOUND message
             if api_response and api_response.status_code == 200:
                 outbound_data = api_response.json()
