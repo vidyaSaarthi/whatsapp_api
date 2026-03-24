@@ -44,7 +44,30 @@ def update_student_opt_in_status(phone, new_status):
     finally:
         db.close()
 
+def update_student_campaign_tags(phone, new_campaign):
+    db = SessionLocal()
+    try:
+        # 1. Find the student by their unique phone number
+        student = db.query(models.Student).filter(models.Student.phone_number == phone).first()
+
+        if student:
+            old_campaign = student.campaign_tags
+            # 2. Update the name attribute
+            student.campaign_tags = new_campaign
+            db.commit()
+            print(f"✅ Success: Updated {phone} from '{old_campaign}' to '{new_campaign}'.")
+        else:
+            print(f"❌ Error: No student found with phone number {phone}.")
+
+    except Exception as e:
+        db.rollback()
+        print(f"⚠️ An error occurred: {e}")
+    finally:
+        db.close()
+
 
 if __name__ == "__main__":
-    update_student_name("919896490308", "Vinay Singh Raghuvanshi")
+    # update_student_name("919896490308", "Vinay Singh Raghuvanshi")
     # update_student_opt_in_status("918377837545",True)
+    update_student_campaign_tags("919711598957","")
+    update_student_campaign_tags("918570068710", "")

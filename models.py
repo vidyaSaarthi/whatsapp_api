@@ -11,6 +11,7 @@ class Student(Base):
     name = Column(String, nullable=True)
     opt_in_status = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    campaign_tags = Column(String, default="")
 
     # 🆕 Pro-Tweak: Allows you to easily access a student's entire message history
     messages = relationship("Message", back_populates="student", cascade="all, delete-orphan")

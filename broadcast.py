@@ -4,13 +4,19 @@ import models
 from templates_library import send_template_message_with_image_id, send_template_message_without_image_id, send_template_message_with_no_parameters
 
 TEMPLATE_NAME = 'vs_jee_engg_forms_alert'
-
+TARGET_CAMPAIGN = "JEE" # Change this whenever you run a new campaign
 
 def run_broadcast():
     db = SessionLocal()
 
     try:
-        active_students = db.query(models.Student).filter(models.Student.opt_in_status == True).all()
+        # active_students = db.query(models.Student).filter(models.Student.opt_in_status == True)models.Student.campaign_tags.ilike(f"%{TARGET_CAMPAIGN}%").all()
+        # Query for students who are opted IN, AND have the target campaign in their tags
+        active_students = db.query(models.Student).filter(
+            models.Student.opt_in_status == True,
+            models.Student.campaign_tags.ilike(f"%{TARGET_CAMPAIGN}%")  # The wildcard trick!
+        ).all()
+
         print(f"📢 Starting broadcast to {len(active_students)} students...", flush=True)
 
         for student in active_students:
@@ -25,7 +31,7 @@ def run_broadcast():
             # 🛠️ FIX 2: Inner Error Handling (Protects the Loop)
             try:
                 # Send the API request
-                res = send_template_message_with_image_id(target_number, TEMPLATE_NAME, safe_name, '1475964460909120')
+                res = send_template_message_with_image_id(target_number, TEMPLATE_NAME, safe_name, '2666370707096324')
 
                 # 🛠️ FIX 3: Prevent crash if the function returned None due to a network error
                 if res is None:
