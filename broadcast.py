@@ -12,14 +12,31 @@ def run_broadcast():
     try:
         # active_students = db.query(models.Student).filter(models.Student.opt_in_status == True)models.Student.campaign_tags.ilike(f"%{TARGET_CAMPAIGN}%").all()
         # Query for students who are opted IN, AND have the target campaign in their tags
-        active_students = db.query(models.Student).filter(
+        # active_students = db.query(models.Student).filter(
+        #     models.Student.opt_in_status == True,
+        #     models.Student.campaign_tags.ilike(f"%{TARGET_CAMPAIGN}%")  # The wildcard trick!
+        # ).all()
+
+        # 1. The Exclusion Subquery:
+        # Find the phone numbers of everyone who ALREADY received this exact template
+        already_sent_subquery = db.query(models.Message.phone_number).filter(
+            models.Message.direction == "outbound",
+            models.Message.message_text.ilike(f"%{TEMPLATE_NAME}%")
+        ).subquery()
+
+        # 2. The Main Query:
+        # Find students who are opted in, have the campaign tag, but are NOT in the subquery
+        target_students = db.query(models.Student).filter(
             models.Student.opt_in_status == True,
-            models.Student.campaign_tags.ilike(f"%{TARGET_CAMPAIGN}%")  # The wildcard trick!
+            models.Student.campaign_tags.ilike(f"%{TARGET_CAMPAIGN}%"),
+            ~models.Student.phone_number.in_(already_sent_subquery)  # 🚨 The magic '~' means NOT
         ).all()
 
-        print(f"📢 Starting broadcast to {len(active_students)} students...", flush=True)
+        print(f"🎯 Found {len(target_students)} NEW students for {TARGET_CAMPAIGN} who haven't received it yet.")
 
-        for student in active_students:
+        print(f"📢 Starting broadcast to {len(target_students)} students...", flush=True)
+
+        for student in target_students:
             target_number = student.phone_number
 
             # 🛠️ FIX 1: Safe Name Fallback

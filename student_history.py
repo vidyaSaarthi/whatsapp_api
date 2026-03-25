@@ -63,4 +63,5 @@ def print_student_timeline(phone: str):
 
 if __name__ == "__main__":
     # Test it by pasting a real number from your database here:
-    print_student_timeline("918570068710")
+    ph_nbr = str(input("Enter the phone number to explore:-"))
+    print_student_timeline("91"+ ph_nbr)
