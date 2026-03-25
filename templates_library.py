@@ -112,14 +112,5 @@ def send_template_message_with_no_parameters(recipient_phone: str, template_name
     except Exception as e:
         print(f"❌ Error sending static template: {e}")
         return None
-'''
-To get media id:-
 
-ACCESS_TOKEN = "EAAS2xeH0744BQzEfVRxxISAkZAueH1SJGyioTvZB2332HaPwWsXziAbRep3nYHGA4U6ZBGKP9VsBZCbN3IkEXzjNyvCN277ETqjdDf3vYkkrlcL9EL1947PQ4Vri6XhEdiDr6Qn7ZAw7egstZCapGNs2nptayxZCfeBmdsowpAHcujxKn3VGFlMBF8yBYbuYC4QbKqs3NlaKZBfOAKHRTo7QNeSX8oqgkzkUZAcmDU6R8ZCjsipnYgDbVYgggORjEI8SNJ8KnEGcHt0RqD355yIjBa3bDtZAy8hqpnFGwZDZD"  # Update if your 24hr token expired
-PHONE_NUMBER_ID = "987112257823129"  # The +1 555 Test Number ID
-
-run below in cmd
-curl -X POST "https://graph.facebook.com/v18.0/987112257823129/media" -H @{ "Authorization: Bearer EAAS2xeH0744BRG1K05rPZASSurVQILom4Jdl6cPyWZANbZBqaLlITQC0ZBn7T085J48Mj8K9f02SUMK6SiPDep44ORVE8oMZAX2fTSIUQiGorMNZAhNA4vfZAQrZBjDZCEaMA1LgM9yfV5QZATSH0EvfTybjYZBVNVZA9lLUO9DUFOHpvaoZAak5BQxAMgnp9jhOMtZCrzTkDSkpfVtqKYwr5UxkYqiqZAfLQsc6hOjz2oOO4LC8dAugb6goQHWRWZB9npxkiuZBZAm7Sauye01KC2IeBaU1zjbSzsmArCDlpaRwZDZD" }  -F "file=@C:/Users/Shubham Aggarwal/Downloads/jee_exams_pic_for_whtsapp_api.jpeg" -F "type=image/jpeg" -F "messaging_product=whatsapp"
-
-'''
 

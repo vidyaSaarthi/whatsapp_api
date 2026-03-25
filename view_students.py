@@ -18,7 +18,7 @@ def show_student_list(limit=20):
         table_data = []
         for s in students:
             status = "✅ Subscribed" if s.opt_in_status else "❌ Unsubscribed"
-            table_data.append([s.name, s.phone_number, s.opt_in_status, s.created_at])
+            table_data.append([s.name, s.phone_number, s.opt_in_status, s.created_at, s.campaign_tags])
 
         # Display using tabulate
         headers = ["Name","Phone Number", "Opt-in Status", "Created At"]

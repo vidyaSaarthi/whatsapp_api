@@ -175,18 +175,19 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_with_no_parameters(student_phone, template_sent)
 
             elif msg_type == "button":
-                print(f"🔘 Student clicked: {text_body}", flush=True)
+                display_name = student.name if student.name and "Unknown" not in student.name else "Student"
+                print(f"🔘 Student - {display_name} clicked: {text_body}", flush=True)
 
                 if text_body.lower() == "Shortlisted exams".lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_shortlisted_exams")
+                    api_response = send_template_message_without_image_id(student_phone, "vs_jee_shortlisted_exams_new", display_name)
                 elif text_body.lower() == 'Find my best exam'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_find_my_best_exam")
+                    api_response = send_template_message_without_image_id(student_phone, "vs_jee_find_my_best_exam_new", display_name)
                 elif text_body.lower() == 'Govt. Colleges'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_govt_colleges")
+                    api_response = send_template_message_without_image_id(student_phone, "vs_jee_govt_colleges_new", display_name)
                 elif text_body.lower() == 'Private Colleges'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_private_colleges")
+                    api_response = send_template_message_without_image_id(student_phone, "vs_jee_private_colleges_new", display_name)
                 elif text_body.lower() == 'Backup options'.lower():
-                    api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_show_backup_options")
+                    api_response = send_template_message_without_image_id(student_phone, "vs_jee_show_backup_options_new", display_name)
                 elif text_body.lower() == 'Talk to expert'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_talk_to_expert")
                 # elif text_body.lower() == 'Stop'.lower():
