@@ -3,8 +3,8 @@ from database import SessionLocal
 import models
 from templates_library import send_template_message_with_image_id, send_template_message_without_image_id, send_template_message_with_no_parameters
 
-TEMPLATE_NAME = 'vs_jee_engg_forms_alert_new_latest'
-TARGET_CAMPAIGN = "JEE" # Change this whenever you run a new campaign
+TEMPLATE_NAME = 'vs_seminar_29_march'
+TARGET_CAMPAIGN = "Aakash - Kurukshetra Branch" # Change this whenever you run a new campaign
 
 def run_broadcast():
     db = SessionLocal()
@@ -48,7 +48,8 @@ def run_broadcast():
             # 🛠️ FIX 2: Inner Error Handling (Protects the Loop)
             try:
                 # Send the API request
-                res = send_template_message_with_image_id(target_number, TEMPLATE_NAME, safe_name, '2666370707096324')
+
+                res = send_template_message_with_image_id(target_number, TEMPLATE_NAME, safe_name, '1271782141717290')
 
                 # 🛠️ FIX 3: Prevent crash if the function returned None due to a network error
                 if res is None:

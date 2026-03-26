@@ -133,5 +133,5 @@ if __name__ == "__main__":
 
     # add_new_student('919205774007', "Saanvi Singla", 'JEE')
     # add_new_student("919896904939", "VidyaSaarthi Vivekam")
-    file_path = r"H:\My Drive\Business\Vidya Saarthi\2026\WhatsApp API\JEE Students Seed.xlsx"
+    file_path = r"H:\My Drive\Business\Vidya Saarthi\2026\WhatsApp API\Students Seed.xlsx"
     import_students_from_excel(file_path)
