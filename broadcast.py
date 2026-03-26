@@ -4,7 +4,7 @@ import models
 from templates_library import send_template_message_with_image_id, send_template_message_without_image_id, send_template_message_with_no_parameters
 
 TEMPLATE_NAME = 'vs_seminar_29_march'
-TARGET_CAMPAIGN = "Aakash - Kurukshetra Branch" # Change this whenever you run a new campaign
+TARGET_CAMPAIGN = "Aakash - Karnal Branch" # Change this whenever you run a new campaign
 
 def run_broadcast():
     db = SessionLocal()

@@ -43,7 +43,7 @@ def clear_all_test_data():
 
 if __name__ == "__main__":
     # OPTION 1: Delete specific numbers
-    numbers_to_remove = ["918377837545"]
+    numbers_to_remove = ["918570068710"]
     delete_students_by_phone(numbers_to_remove)
 
     # OPTION 2: Uncomment the line below if you want to wipe everything for a clean test
