@@ -190,10 +190,6 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_without_image_id(student_phone, "vs_jee_show_backup_options_new", display_name)
                 elif text_body.lower() == 'Talk to expert'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_talk_to_expert")
-                # elif text_body.lower() == 'Stop'.lower():
-                #     api_response = send_template_message_with_no_parameters(student_phone, "va_jee_stop")
-                #     student.opt_in_status = False
-                #     db.commit()
                 elif text_body.lower() == 'Apply with Guidance'.lower():
                     api_response = send_template_message_with_no_parameters(student_phone, "vs_jee_apply_with_guidance")
                 elif text_body.lower() == 'Request Callback'.lower():
@@ -201,7 +197,14 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     reply_text = "Thank you! A VidyaSaarthi expert will call you shortly to assist with your admission journey."
                     api_response = send_whatsapp_reply(student_phone, reply_text)
                     template_sent = "Freeform: Callback Confirmation"
-
+                elif text_body.lower() == 'NEET / Medical'.lower():
+                    api_response = send_template_message_with_image_id(student_phone, "vs_seminar_29_march_message2a_neet",display_name, "4243417402590320")
+                elif text_body.lower() == 'JEE / Engineering'.lower():
+                    api_response = send_template_message_with_image_id(student_phone, "vs_seminar_29_march_message2b_jee",display_name, "1692461095442845")
+                elif text_body.lower() == 'Confirm My Seat'.lower():
+                    api_response = send_template_message_without_image_id(student_phone, "vs_seminar_29_march_message3a_confirm_seat", display_name)
+                elif text_body.lower() == 'Cannot Attend'.lower():
+                    pass
                 else:
                     api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
                                                              template_name="vs_welcome_message_marketing")

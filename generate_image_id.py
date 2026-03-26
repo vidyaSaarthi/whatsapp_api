@@ -3,7 +3,7 @@ from templates_library import ACCESS_TOKEN, PHONE_NUMBER_ID
 
 
 # Just type the name of the image file you want to upload
-IMAGE_NAME = r"H:\My Drive\Business\Vidya Saarthi\2026\WhatsApp API\jee_exams_pic_for_whtsapp_api_3.jpg"
+IMAGE_NAME = r"H:\My Drive\Business\Vidya Saarthi\2026\WhatsApp API\Seminar image.jpg"
 
 
 def generate_image_id():
@@ -45,4 +45,7 @@ if __name__ == "__main__":
 jee_exams_pic_for_whtsapp_api.jpeg - 1475964460909120
 jee_exams_pic_for_whtsapp_api_2.jpeg - 1644488673556980
 jee_exams_pic_for_whtsapp_api_3.jpeg - 2666370707096324
+Seminar image.jpg - 1271782141717290
+JEE Pass 29th Seminar.jpg - 1692461095442845
+NEET Pass 29th Seminar.jpg - 4243417402590320
 '''
