@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 TELEGRAM_BOT_TOKEN = "8526202388:AAG5bD6MSaHBh1Fzk042J5cYYmcC-PwgD84"
 TELEGRAM_CHAT_ID = "@vs_whatsapp_api_alerts"  # Group IDs usually start with a minus sign (-)
 
-def send_report_to_telegram(file_path: str):
+def send_report_to_telegram(file_path: str, caption_msg):
     """Uploads the generated text file directly to a Telegram group."""
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendDocument"
 
@@ -25,7 +25,7 @@ def send_report_to_telegram(file_path: str):
             files = {"document": document}
             data = {
                 "chat_id": TELEGRAM_CHAT_ID,
-                "caption": "📊 Here is the last 1 hour funnel report."
+                "caption": caption_msg
             }
 
             response = requests.post(url, data=data, files=files)
@@ -243,7 +243,7 @@ def analyze_chatbot_funnel():
         finally:
             db.close()
 
-    send_report_to_telegram(filename)
+    send_report_to_telegram(filename, "📊 Here is the overall funnel report.")
 
 
 if __name__ == "__main__":
@@ -251,6 +251,6 @@ if __name__ == "__main__":
         cleanup_old_reports()
         export_callbacks_to_excel()
         analyze_chatbot_funnel()
-        send_report_to_telegram(generate_hourly_activity_report())
+        send_report_to_telegram(generate_hourly_activity_report(), "📊 Here is the last 1 hour funnel report.")
         print("Sleeping for 1 hour")
         time.sleep(3600)
