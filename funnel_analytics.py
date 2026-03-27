@@ -1,4 +1,4 @@
-import os
+import os, glob
 from datetime import datetime
 from database import SessionLocal
 import models
@@ -11,6 +11,41 @@ from export_callbacks import export_callbacks_to_excel
 # --- Telegram Configuration ---
 TELEGRAM_BOT_TOKEN = "8526202388:AAG5bD6MSaHBh1Fzk042J5cYYmcC-PwgD84"
 TELEGRAM_CHAT_ID = "@vs_whatsapp_api_alerts"  # Group IDs usually start with a minus sign (-)
+
+
+def cleanup_old_reports(days_to_keep=7):
+    """Scans the folder and deletes VidyaSaarthi reports older than 7 days."""
+    print(f"\n🧹 Running Housekeeping: Checking for reports older than {days_to_keep} days...")
+
+    # 1. Calculate the exact cutoff time in seconds
+    now = time.time()
+    cutoff_time = now - (days_to_keep * 86400)  # 86400 seconds in a day
+
+    # 2. Define the exact file patterns so we don't accidentally delete code/DB files!
+    patterns = [
+        "VidyaSaarthi_Funnel_Report_*.txt",
+        "VidyaSaarthi_Callbacks_*.xlsx"  # Make sure this matches your Excel export filename!
+    ]
+
+    deleted_count = 0
+
+    # 3. Search and Destroy
+    for pattern in patterns:
+        for filepath in glob.glob(pattern):
+            # Check the file's modification timestamp
+            file_modified_time = os.path.getmtime(filepath)
+
+            if file_modified_time < cutoff_time:
+                try:
+                    os.remove(filepath)
+                    deleted_count += 1
+                    print(f"  🗑️ Deleted: {os.path.basename(filepath)}")
+                except Exception as e:
+                    print(f"  ⚠️ Could not delete {filepath}: {e}")
+
+    print(f"✅ Housekeeping complete. {deleted_count} old files removed.\n")
+
+
 
 def send_report_to_telegram(file_path: str):
     """Uploads the generated text file directly to a Telegram group."""
@@ -150,6 +185,7 @@ def analyze_chatbot_funnel():
 
 if __name__ == "__main__":
     while 1:
+        cleanup_old_reports()
         export_callbacks_to_excel()
         analyze_chatbot_funnel()
         print("Sleeping for 1 hour")

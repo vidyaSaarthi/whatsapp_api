@@ -2,6 +2,10 @@ from database import SessionLocal
 import models
 from tabulate import tabulate
 
+import os
+import time
+import glob
+
 
 def show_student_list(view_campaign_flag = True, campaign_name = 'NO'):
     db = SessionLocal()
@@ -86,6 +90,6 @@ def show_student_list(view_campaign_flag = True, campaign_name = 'NO'):
 
 
 if __name__ == "__main__":
-    show_student_list(view_campaign_flag = False)
+    # show_student_list(view_campaign_flag = False)
     # show_student_list(view_campaign_flag=True)
-    # show_student_list(view_campaign_flag=True, campaign_name = 'organic_inbound')
+    show_student_list(view_campaign_flag=True, campaign_name = 'JEE')
