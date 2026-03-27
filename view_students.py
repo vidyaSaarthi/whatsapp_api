@@ -92,4 +92,4 @@ def show_student_list(view_campaign_flag = True, campaign_name = 'NO'):
 if __name__ == "__main__":
     # show_student_list(view_campaign_flag = False)
     # show_student_list(view_campaign_flag=True)
-    show_student_list(view_campaign_flag=True, campaign_name = 'JEE')
+    show_student_list(view_campaign_flag=True, campaign_name = 'Aakash - Kaithal Branch')
