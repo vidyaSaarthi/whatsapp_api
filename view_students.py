@@ -1,11 +1,7 @@
+from sqlalchemy import func
 from database import SessionLocal
 import models
 from tabulate import tabulate
-
-import os
-import time
-import glob
-
 
 def show_student_list(view_campaign_flag = True, campaign_name = 'NO'):
     db = SessionLocal()
@@ -91,5 +87,17 @@ def show_student_list(view_campaign_flag = True, campaign_name = 'NO'):
 
 if __name__ == "__main__":
     # show_student_list(view_campaign_flag = False)
-    # show_student_list(view_campaign_flag=True)
-    show_student_list(view_campaign_flag=True, campaign_name = 'Aakash - Kaithal Branch')
+    # show_student_list(view_campaign_flag=True, campaign_name='Aakash - Gurgaon - South City 2') #326
+    # show_student_list(view_campaign_flag=True, campaign_name = 'Aakash - Gurgaon Sector 14 (Old)') #476
+    # show_student_list(view_campaign_flag=True, campaign_name='Aakash - Faridabad Branch') #197
+    # show_student_list(view_campaign_flag=True, campaign_name='Aakash - Faridabad NIT Branch') #318
+    show_student_list(view_campaign_flag=True, campaign_name='Aakash - Panchkula Branch') #105
+    # show_student_list(view_campaign_flag=True, campaign_name='ORGANIC_INBOUND')
+
+
+
+#Aakash - Gurgaon - South City 2
+#Aakash - Gurgaon Sector 14 (Old)
+#Aakash - Faridabad Branch
+#Aakash - Faridabad NIT Branch
+#Aakash - Panchkula Branch

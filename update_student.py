@@ -44,6 +44,25 @@ def update_student_opt_in_status(phone, new_status):
     finally:
         db.close()
 
+
+def update_all_students_opt_in_status(new_status=True):
+    db = SessionLocal()
+    try:
+        # Perform a bulk update on the entire table directly at the database level
+        updated_count = db.query(models.Student).update(
+            {models.Student.opt_in_status: new_status},
+            synchronize_session=False
+        )
+
+        db.commit()
+        print(f"✅ Success: Updated all {updated_count} students to '{new_status}'.")
+
+    except Exception as e:
+        db.rollback()
+        print(f"⚠️ An error occurred: {e}")
+    finally:
+        db.close()
+
 def update_student_campaign_tags(phone, new_campaign):
     db = SessionLocal()
     try:
@@ -68,9 +87,11 @@ def update_student_campaign_tags(phone, new_campaign):
 
 if __name__ == "__main__":
     # update_student_name("919896490308", "Vinay Singh Raghuvanshi")
-    # update_student_opt_in_status("918377837545",True)
-    # update_student_campaign_tags("919711598957","JEE")
-    update_student_campaign_tags("918570068710", "")
+    update_student_opt_in_status("91",True)
+    update_student_campaign_tags("918377837545","ORGANIC_INBOUND")
+    # update_student_campaign_tags("918570068710", "ORGANIC_INBOUND")
     # update_student_campaign_tags("919205774007", "")
-    update_student_opt_in_status("918570068710", True)
-    update_student_campaign_tags("918377837545", 'JEE')
+    # update_student_opt_in_status("918570068710", True)
+    # update_student_campaign_tags("ORGANIC_INBOUND", '')
+
+    # update_all_students_opt_in_status()

@@ -131,7 +131,8 @@ if __name__ == "__main__":
     # add_new_student("919711598957", "Shruti Aggarwal")
     # add_new_student("918570068710", "Shruti Aggarwal JEE")
 
-    # add_new_student('919205774007', "Saanvi Singla", 'JEE')
+    # add_new_student('918377837545', "Shubham", 'ORGANIC_INBOUND')
     # add_new_student("919896904939", "VidyaSaarthi Vivekam")
-    file_path = r"H:\My Drive\Business\Vidya Saarthi\2026\WhatsApp API\Students Seed.xlsx"
+
+    file_path = r"H:\My Drive\Business\Vidya Saarthi\2026\WhatsApp API\Students Seed 2.xlsx"
     import_students_from_excel(file_path)

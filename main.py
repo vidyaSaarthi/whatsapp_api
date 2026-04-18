@@ -205,9 +205,10 @@ async def receive_message(request: Request, db: Session = Depends(get_db)):
                     api_response = send_template_message_without_image_id(student_phone, "vs_seminar_29_march_message3a_confirm_seat", display_name)
                 elif text_body.lower() == 'Cannot Attend'.lower():
                     pass
+                # elif text_body.lower() == 'Join Webinar'.lower():
+                #     api_response = send_template_message_without_image_id(student_phone, "19april_join_webinar_auto_respone_template", display_name)
                 else:
-                    api_response = send_template_message_with_no_parameters(recipient_phone=student_phone,
-                                                             template_name="vs_welcome_message_marketing")
+                    pass
 
             print(api_response,api_response.status_code,api_response.json())
             # 🛠️ FIX 3: Capture and log the OUTBOUND message
