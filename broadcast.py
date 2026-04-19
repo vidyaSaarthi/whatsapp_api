@@ -3,8 +3,8 @@ from database import SessionLocal
 import models
 from templates_library import send_template_message_with_image_id, send_template_message_without_image_id, send_template_message_with_no_parameters
 
-TEMPLATE_NAME = '19april_webinar_neet_template_2'
-TARGET_CAMPAIGN = "Aakash - Faridabad Branch" # Change this whenever you run a new campaign
+TEMPLATE_NAME = '10april_webinar_followup_template'
+TARGET_CAMPAIGN = "Webinar_group_join_reminder_2" # Change this whenever you run a new campaign
 
 def run_broadcast():
     db = SessionLocal()
@@ -49,8 +49,8 @@ def run_broadcast():
             try:
                 # Send the API request
 
-                res = send_template_message_without_image_id(target_number, TEMPLATE_NAME, safe_name)
-                # res = send_template_message_with_no_parameters(target_number, TEMPLATE_NAME)
+                # res = send_template_message_without_image_id(target_number, TEMPLATE_NAME, safe_name)
+                res = send_template_message_with_no_parameters(target_number, TEMPLATE_NAME)
 
                 # 🛠️ FIX 3: Prevent crash if the function returned None due to a network error
                 if res is None:
